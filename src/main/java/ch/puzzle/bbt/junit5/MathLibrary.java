@@ -8,9 +8,9 @@ public class MathLibrary {
         return value1 * value2;
     }
 
-    public void setName(String name) throws Exception {
+    public void setName(String name) throws BusinessException {
         if(name == null) {
-            throw new Exception("the name is null");
+            throw new BusinessException("the name is null");
         }
         this.name  = name;
     }

@@ -7,11 +7,11 @@ public class ListMathLibrary {
 
     String name = "standard ListMathLibrary";
 
-    List<Integer> numberList = new ArrayList<>();
+    final List<Integer> numberList = new ArrayList<>();
 
-    public void setName(String name) throws Exception {
+    public void setName(String name) throws BusinessException {
         if(name == null) {
-            throw new Exception("the name is null");
+            throw new BusinessException("the name is null");
         }
         this.name  = name;
     }
@@ -22,5 +22,9 @@ public class ListMathLibrary {
 
     public Integer sumNumbers() {
         return numberList.stream().mapToInt(i -> i).sum();
+    }
+
+    public void reset() {
+        numberList.clear();
     }
 }

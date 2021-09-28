@@ -27,30 +27,11 @@ class CalculatorTest {
         calculator.listMathLibrary = listMathLibrary;
     }
 
-
-    /**
-     * Verify local variables.
-     */
-    @Test
-    void testResult() throws Exception {
-        assertEquals(calculator.resultatMap.size(), 0);
-        calculator.putResult("Summe 1", 35);
-        assertEquals(calculator.resultatMap.size(), 1);
-        assertEquals(calculator.resultatMap.get("Summe 1"), 35);
-    }
-    @Test
-    void testResult2() throws Exception {
-//        when(calculator)
-        assertEquals(calculator.resultatMap.size(), 0);
-        calculator.putResult("Summe 1", 35);
-        assertEquals(calculator.resultatMap.size(), 1);
-    }
-
     /**
      * Simple test.
      */
     @Test
-    void testSum() throws Exception {
+    void testSum() throws BusinessException {
         // given
         // when
         int result = calculator.sum(3, 2);
@@ -59,19 +40,19 @@ class CalculatorTest {
     }
 
     /**
-     * Test for a exception.
+     * Test for an exception.
      */
     @Test
     void testSum_withException() {
         // given
         // when
-        Exception exception = assertThrows(Exception.class, () ->
+        BusinessException exception = assertThrows(BusinessException.class, () ->
                 calculator.sum(null, 2));
         assertEquals("first value is null", exception.getMessage());
     }
 
     /**
-     * Define a exception for a method, that has a return value.
+     * Define an exception for a method, that has a return value.
      */
     @Test
     void defineExceptionForAMethod() {
@@ -84,14 +65,14 @@ class CalculatorTest {
     }
 
     /**
-     * Define a exception for a method, that return void.
+     * Define an exception for a method, that return void.
      */
     @Test
-    void defineExceptionForAMethodThatReturnVoid() throws Exception {
+    void defineExceptionForAMethodThatReturnVoid() throws BusinessException {
         // given
-        doThrow(new Exception("TestException")).when(mathLibrary).setName(any());
+        doThrow(new BusinessException("TestException")).when(mathLibrary).setName(any());
         // when
-        Exception exception = assertThrows(Exception.class, () ->
+        BusinessException exception = assertThrows(BusinessException.class, () ->
             calculator.setName("theName"));
         assertEquals("TestException", exception.getMessage());
     }
@@ -100,7 +81,7 @@ class CalculatorTest {
      * Prepare the mock for the math library implementation.
      */
     @Test
-    void oneWhenCondition() throws Exception {
+    void oneWhenCondition() throws BusinessException {
         // given
         when(mathLibrary.multiply(any(Integer.class), anyInt())).thenReturn(6);
         // when
@@ -117,7 +98,7 @@ class CalculatorTest {
      * Use more when conditions for the same mock.
      */
     @Test
-    void moreWhenConditions() throws Exception {
+    void moreWhenConditions() throws BusinessException {
         // given
         when(mathLibrary.multiply(anyInt(), anyInt())).thenReturn(6);
         when(mathLibrary.multiply(3, 3)).thenReturn(9);
@@ -130,7 +111,7 @@ class CalculatorTest {
      * Use stubbing when conditions for the same mock.
      */
     @Test
-    void sequenceOfWhenConditions() throws Exception {
+    void sequenceOfWhenConditions() throws BusinessException {
         // given
         when(mathLibrary.multiply(anyInt(), anyInt()))
                 .thenReturn(6)
@@ -145,10 +126,10 @@ class CalculatorTest {
     }
 
     /**
-     * Use stubbing doNothin and doThrow conditions for the same mock.
+     * Use stubbing doNotin and doThrow conditions for the same mock.
      */
     @Test
-    void sequenceOfConditions() throws Exception {
+    void sequenceOfConditions() throws BusinessException {
         // given
         doNothing()
         .doThrow(new RuntimeException("Test RuntimeException"))
@@ -165,7 +146,7 @@ class CalculatorTest {
      * Use a dummy implementation for prepare the mock.
      */
     @Test
-    void testMultiplication_withDummyImplementation() throws Exception {
+    void testMultiplication_withDummyImplementation() throws BusinessException {
         // given
         when(mathLibrary.multiply(anyInt(), anyInt())).thenAnswer(answer -> {
             int v1 = answer.getArgument(0);
@@ -182,7 +163,7 @@ class CalculatorTest {
      * Verify the invocations of the library.
      */
     @Test
-    void verivyNumberOfInvocations() throws Exception {
+    void verifyNumberOfInvocations() throws BusinessException {
         // given
         when(listMathLibrary.sumNumbers()).thenReturn(22);
         // when
@@ -195,6 +176,7 @@ class CalculatorTest {
         verify(listMathLibrary, times(0)).setName(anyString());
         // verifyNoMoreInteractions(listMathLibrary); // -> fail
         verify(listMathLibrary, times(4)).addNumber(anyInt());
+        verify(listMathLibrary, times(1)).reset();
         verifyNoMoreInteractions(listMathLibrary); // -> true
 
         verify(listMathLibrary, atLeastOnce()).addNumber(5);
@@ -206,7 +188,7 @@ class CalculatorTest {
     }
 
     @Test
-    void verivyNoMoreInteractions() {
+    void verifyForNoMoreInteractions() {
         // given
         when(listMathLibrary.sumNumbers()).thenReturn(22);
         // when
@@ -214,11 +196,12 @@ class CalculatorTest {
         // then
         verify(listMathLibrary, times(1)).sumNumbers();
         verify(listMathLibrary, times(4)).addNumber(anyInt());
+        verify(listMathLibrary, times(1)).reset();
         verifyNoMoreInteractions(listMathLibrary);
     }
 
     @Test
-    void verivyInOrderOfInvocations() {
+    void verifyInOrderOfInvocations() {
         // given
         when(listMathLibrary.sumNumbers()).thenReturn(22);
         // when
@@ -238,7 +221,7 @@ class CalculatorTest {
     }
 
     @Test
-    void verifyMethodArguments() throws Exception {
+    void verifyMethodArguments() throws BusinessException {
         // given
         // when
         calculator.setName("Hugo");
@@ -251,7 +234,7 @@ class CalculatorTest {
     }
 
     @Test
-    void verifyMethodArgumentsWithArgumentThat() throws Exception {
+    void verifyMethodArgumentsWithArgumentThat() throws BusinessException {
         // given
         // when
         calculator.setName("Hugo");
@@ -266,5 +249,40 @@ class CalculatorTest {
     void disabledTest() {
         // this test is disabled
         fail("this test fail always");
+    }
+
+    /**
+     * Verify local variables.
+     */
+    @Test
+    void testResult() throws BusinessException {
+        assertEquals(0, calculator.resultatMap.size());
+        calculator.putResult("Summe 1", 35);
+        assertEquals(1, calculator.resultatMap.size());
+        assertEquals(35, calculator.resultatMap.get("Summe 1"));
+    }
+    @Test
+    void testResult2() throws BusinessException {
+        assertEquals(0, calculator.resultatMap.size());
+        calculator.putResult("Summe 1", 35);
+        calculator.putResult("Summe 2", 88);
+        assertEquals(2, calculator.resultatMap.size());
+        assertEquals(88, calculator.resultatMap.get("Summe 2"));
+    }
+
+    /**
+     * Test an interaction of a local method with a spy object.
+     */
+    @Test
+    void testSummAllResults() throws BusinessException {
+        // given
+        Calculator spy = spy(Calculator.class);
+        spy.putResult("summe 1", 9);
+        spy.putResult("summe 2", 10);
+        spy.putResult("summe 3", 11);
+        // when
+        assertEquals(30, spy.sumAllResults());
+        // then
+        verify(spy, times(1)).sumNumbers(any(Integer.class));
     }
 }

@@ -10,7 +10,7 @@ public class Calculator {
     MathLibrary mathLibrary = new MathLibrary();
     ListMathLibrary listMathLibrary = new ListMathLibrary();
 
-    Map<String, Integer> resultatMap = new HashMap<>();
+    final Map<String, Integer> resultatMap = new HashMap<>();
 
     public Calculator() {
     }
@@ -19,46 +19,51 @@ public class Calculator {
         instanceName = name;
     }
 
-    public void setName(String name) throws Exception {
+    public void setName(String name) throws BusinessException {
         if (name == null) {
-            throw new Exception("the name is null");
+            throw new BusinessException("the name is null");
         }
         this.instanceName = name;
         mathLibrary.setName("MathLibrary_" + name);
     }
 
-    public Integer sum(Integer firstValue, Integer secondValue) throws Exception {
+    public Integer sum(Integer firstValue, Integer secondValue) throws BusinessException {
         if (firstValue == null) {
-            throw new Exception("first value is null");
+            throw new BusinessException("first value is null");
         }
         if (secondValue == null) {
-            throw new Exception("second value is null");
+            throw new BusinessException("second value is null");
         }
         return firstValue + secondValue;
     }
 
-    public int multiply(Integer firstValue, Integer secondValue) throws Exception {
+    public int multiply(Integer firstValue, Integer secondValue) throws BusinessException {
         if (firstValue == null) {
-            throw new Exception("first value is null");
+            throw new BusinessException("first value is null");
         }
         if (secondValue == null) {
-            throw new Exception("second value is null");
+            throw new BusinessException("second value is null");
         }
         return mathLibrary.multiply(firstValue, secondValue);
     }
 
     public Integer sumNumbers(Integer... numbers) {
+        listMathLibrary.reset();
         Arrays.stream(numbers).forEach(number -> listMathLibrary.addNumber(number));
         return listMathLibrary.sumNumbers();
     }
 
-    public void putResult(String name, Integer result) throws Exception {
+    public void putResult(String name, Integer result) throws BusinessException {
         if (name == null) {
-            throw new Exception("the name is null");
+            throw new BusinessException("the name is null");
         }
         if (result == null) {
-            throw new Exception("the result is null");
+            throw new BusinessException("the result is null");
         }
         this.resultatMap.put(name, result);
+    }
+
+    public Integer sumAllResults() {
+        return sumNumbers(this.resultatMap.values().toArray(Integer[]::new));
     }
 }
